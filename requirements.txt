@@ -1,0 +1,12 @@
+# Chatbot TBC Detection System
+# Python Built-in Libraries (tidak perlu install)
+
+# Untuk development (opsional):
+pylint==3.0.3        # Code linting
+black==23.12.1       # Code formatter
+pytest==7.4.3        # Testing
+
+# Untuk upgrade ke web-based (future):
+flask==3.0.0         # Web framework
+flask-cors==4.0.0    # CORS handling
+gunicorn==21.2.0     # Production server
