@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deteksi TBC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .nav-links a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+        }
+        .form-card h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+        .question-card.active {
+            display: block;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .btn-yes {
+            background: #667eea;
+            color: white;
+        }
+        .btn-no {
+            background: #e0e0e0;
+            color: #333;
+        }
+        .story-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+        .story-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+        .result-card.active {
+            display: block;
+        }
+        .result-level {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .level-rendah {
+            background: #d4edda;
+            color: #155724;
+        }
+        .level-sedang {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .level-tinggi {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .progress {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: #667eea;
+            height: 100%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🏥 TBC Detection</div>
+            <div class="nav-links">
+                <a href="/">Beranda</a>
+                <a href="/deteksi">Deteksi</a>
+                <a href="/statistik">Statistik</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Form Data Pasien -->
+        <div class="form-card" id="patient-form">
+            <h2>Data Pasien</h2>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+            </div>
+            <div class="form-group">
+                <label>Umur</label>
+                <input type="number" id="umur" placeholder="Masukkan umur" required>
+            </div>
+            <div class="form-group">
+                <label>Jenis Kelamin</label>
+                <select id="jenis_kelamin" required>
+                    <option value="">Pilih jenis kelamin</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
+            <button class="btn btn-yes" onclick="startDetection()">Mulai Deteksi</button>
+        </div>
+
+        <!-- Pertanyaan -->
+        <div class="question-card" id="question-card">
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p class="question-text" id="question-text"></p>
+            <div class="btn-group">
+                <button class="btn btn-yes" onclick="answer(true)">Ya</button>
+                <button class="btn btn-no" onclick="answer(false)">Tidak</button>
+            </div>
+        </div>
+
+        <!-- Input Cerita -->
+        <div class="question-card" id="story-card">
+            <h2>Ceritakan Gejala Anda</h2>
+            <p style="margin-bottom: 1rem; color: #666;">Jelaskan gejala yang Anda rasakan dengan detail (batuk, demam, keringat malam, dll)</p>
+            <textarea class="story-input" id="story" placeholder="Contoh: Saya mengalami batuk sudah 3 minggu, kadang batuk berdarah, sering demam dan berkeringat di malam hari..."></textarea>
+            <button class="btn btn-yes" style="margin-top: 1rem;" onclick="submitStory()">Analisis</button>
+        </div>
+
+        <!-- Hasil -->
+        <div class="result-card" id="result-card">
+            <h2>Hasil Deteksi</h2>
+            <div id="result-level" class="result-level"></div>
+            <div id="result-details"></div>
+            <button class="btn btn-yes" style="margin-top: 2rem;" onclick="location.reload()">Deteksi Ulang</button>
+            <a href="/statistik" class="btn btn-no" style="margin-top: 1rem; display: inline-block; text-align: center; text-decoration: none;">Lihat Statistik</a>
+        </div>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        let currentScore = 0;
+        let patientData = {};
+
+        function startDetection() {
+            const nama = document.getElementById('nama').value;
+            const umur = document.getElementById('umur').value;
+            const jenis_kelamin = document.getElementById('jenis_kelamin').value;
+
+            if (!nama || !umur || !jenis_kelamin) {
+                alert('Mohon lengkapi semua data!');
+                return;
+            }
+
+            patientData = { nama, umur, jenis_kelamin };
+            document.getElementById('patient-form').style.display = 'none';
+            document.getElementById('question-card').classList.add('active');
+            loadQuestion();
+        }
+
+        async function loadQuestion() {
+            const response = await fetch('/get_question', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ index: currentIndex, score: currentScore })
+            });
+
+            const data = await response.json();
+
+            if (data.type === 'question') {
+                document.getElementById('question-text').textContent = data.question;
+                currentQuestionValue = data.value;
+                updateProgress();
+            } else {
+                document.getElementById('question-card').classList.remove('active');
+                document.getElementById('story-card').classList.add('active');
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentIndex / 6) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function answer(isYes) {
+            if (isYes) {
+                currentScore += currentQuestionValue;
+            }
+            currentIndex++;
+            loadQuestion();
+        }
+
+        async function submitStory() {
+            const story = document.getElementById('story').value;
+
+            if (!story.trim()) {
+                alert('Mohon ceritakan gejala Anda!');
+                return;
+            }
+
+            const response = await fetch('/analyze_story', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...patientData,
+                    story: story,
+                    score: currentScore
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                displayResult(result);
+            } else {
+                alert('Terjadi kesalahan: ' + result.error);
+            }
+        }
+
+        function displayResult(result) {
+            document.getElementById('story-card').classList.remove('active');
+            document.getElementById('result-card').classList.add('active');
+
+            const levelEl = document.getElementById('result-level');
+            levelEl.textContent = result.level;
+            
+            if (result.level.includes('Rendah')) {
+                levelEl.className = 'result-level level-rendah';
+            } else if (result.level.includes('Sedang')) {
+                levelEl.className = 'result-level level-sedang';
+            } else {
+                levelEl.className = 'result-level level-tinggi';
+            }
+
+            let detailsHTML = `
+                <p style="margin-bottom: 1rem;"><strong>Skor Total:</strong> ${result.score}</p>
+                <p style="margin-bottom: 1rem;"><strong>Saran:</strong> ${result.saran}</p>
+            `;
+
+            if (result.detected.length > 0) {
+                detailsHTML += '<p style="margin-top: 1.5rem;"><strong>Gejala yang Terdeteksi:</strong></p><ul style="margin-left: 1.5rem;">';
+                result.detected.forEach(item => {
+                    detailsHTML += `<li>${item.keyword} (bobot: ${item.value})</li>`;
+                });
+                detailsHTML += '</ul>';
+            }
+
+            document.getElementById('result-details').innerHTML = detailsHTML;
+        }
+    </script>
+</body>
+</html>

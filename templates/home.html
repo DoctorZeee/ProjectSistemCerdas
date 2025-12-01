@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TBC Detection - Beranda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #d97706;
+            --accent-color: #fbbf24;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --border: #e5e7eb;
+        }
+        
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --secondary-color: #f59e0b;
+            --accent-color: #fbbf24;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --border: #334155;
+        }
+        
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .navbar {
+            background: var(--bg-card);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px var(--shadow);
+            border-bottom: 2px solid var(--primary-color);
+            transition: background 0.3s ease;
+        }
+        
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .theme-toggle {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, background 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--secondary-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .disclaimer-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px var(--shadow);
+            border-left: 5px solid var(--secondary-color);
+            margin-bottom: 3rem;
+        }
+        
+        .disclaimer-title {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .disclaimer-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .info-section {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        
+        .info-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-list li {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+            color: var(--text-primary);
+            transition: transform 0.2s;
+        }
+        
+        .info-list li:hover {
+            transform: translateX(5px);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🏥 TBC Detection</div>
+            <div class="nav-links">
+                <a href="/">Beranda</a>
+                <a href="/statistik">Statistik</a>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero-section">
+            <h1 class="hero-title">Sistem Deteksi Dini TBC</h1>
+            <p class="hero-subtitle">Deteksi gejala tuberkulosis dengan cepat dan akurat</p>
+            <button class="cta-button" onclick="location.href='/deteksi'">
+                🔍 Mulai Deteksi Sekarang
+            </button>
+        </div>
+
+        <div class="disclaimer-card">
+            <div class="disclaimer-title">⚠️ PENTING - DISCLAIMER</div>
+            <p class="disclaimer-text">
+                Sistem ini <strong>BUKAN</strong> pengganti diagnosis medis profesional. 
+                Hasil deteksi hanya sebagai panduan awal untuk skrining gejala TBC. 
+                Untuk diagnosis yang akurat, <strong>segera konsultasikan ke dokter atau fasilitas kesehatan terdekat</strong>.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔬</div>
+                <div class="feature-title">Deteksi Komprehensif</div>
+                <p class="feature-description">
+                    Sistem mendeteksi berbagai jenis TBC termasuk TBC Paru, Kelenjar, Tulang, dan Selaput Otak berdasarkan gejala yang Anda alami.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Analisis Mendalam</div>
+                <p class="feature-description">
+                    Menganalisis gejala, faktor risiko, dan cerita kesehatan Anda untuk memberikan hasil yang lebih akurat dan personal.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Hasil Instan</div>
+                <p class="feature-description">
+                    Dapatkan hasil deteksi dan rekomendasi tindak lanjut dalam hitungan menit dengan tingkat risiko yang jelas.
+                </p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>🩺 Apa itu Tuberkulosis (TBC)?</h2>
+            <p class="feature-description" style="margin-bottom: 1.5rem;">
+                Tuberkulosis adalah penyakit menular yang disebabkan oleh bakteri Mycobacterium tuberculosis. 
+                TBC umumnya menyerang paru-paru, tetapi dapat juga menyerang organ tubuh lainnya.
+            </p>
+            <ul class="info-list">
+                <li><strong>TBC Paru:</strong> Menyerang paru-paru dengan gejala batuk berkepanjangan, batuk berdarah, dan sesak napas</li>
+                <li><strong>TBC Kelenjar:</strong> Menyerang kelenjar getah bening dengan benjolan di leher, ketiak, atau selangkangan</li>
+                <li><strong>TBC Tulang:</strong> Menyerang tulang dan sendi dengan nyeri dan pembengkakan</li>
+                <li><strong>TBC Selaput Otak:</strong> Menyerang selaput otak dengan sakit kepala hebat dan kejang</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h2>🎯 Cara Menggunakan Sistem</h2>
+            <ul class="info-list">
+                <li><strong>1. Isi Data Diri:</strong> Masukkan informasi dasar seperti nama, usia, dan lokasi</li>
+                <li><strong>2. Jawab Pertanyaan Gejala:</strong> Jawab serangkaian pertanyaan tentang gejala yang Anda alami</li>
+                <li><strong>3. Identifikasi Faktor Risiko:</strong> Jawab pertanyaan terkait faktor risiko TBC</li>
+                <li><strong>4. Ceritakan Kondisi:</strong> Tulis detail kondisi kesehatan Anda dengan bebas</li>
+                <li><strong>5. Dapatkan Hasil:</strong> Sistem akan menganalisis dan memberikan hasil deteksi dengan rekomendasi</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h2>📈 Statistik & Data</h2>
+            <p class="feature-description" style="margin-bottom: 1rem;">
+                Lihat data statistik deteksi TBC yang telah dilakukan, termasuk distribusi risiko, 
+                kelompok umur yang terdeteksi, dan lokasi dengan kasus terbanyak.
+            </p>
+            <button class="cta-button" style="font-size: 1rem; padding: 0.8rem 2rem;" onclick="location.href='/statistik'">
+                📊 Lihat Statistik
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        });
+    </script>
+</body>
+</html>
