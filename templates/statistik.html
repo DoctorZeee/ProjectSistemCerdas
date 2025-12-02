@@ -1,1042 +1,976 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Statistik TBC - Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      
-      :root {
-        --primary-color: #1e3a8a;
-        --secondary-color: #d97706;
-        --accent-color: #fbbf24;
-        --success-color: #059669;
-        --warning-color: #f59e0b;
-        --danger-color: #dc2626;
-        --text-primary: #1f2937;
-        --text-secondary: #6b7280;
-        --bg-primary: #f8fafc;
-        --bg-card: #ffffff;
-        --shadow: rgba(0, 0, 0, 0.1);
-        --border: #e5e7eb;
-      }
-      
-      [data-theme="dark"] {
-        --primary-color: #3b82f6;
-        --secondary-color: #f59e0b;
-        --accent-color: #fbbf24;
-        --success-color: #10b981;
-        --warning-color: #fbbf24;
-        --danger-color: #ef4444;
-        --text-primary: #f3f4f6;
-        --text-secondary: #9ca3af;
-        --bg-primary: #0f172a;
-        --bg-card: #1e293b;
-        --shadow: rgba(0, 0, 0, 0.3);
-        --border: #334155;
-      }
-      
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: var(--bg-primary);
-        min-height: 100vh;
-        color: var(--text-primary);
-        transition: background 0.3s ease, color 0.3s ease;
-      }
-      
-      .navbar {
-        background: var(--bg-card);
-        padding: 1rem 2rem;
-        box-shadow: 0 2px 10px var(--shadow);
-        border-bottom: 2px solid var(--primary-color);
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-      }
-      
-      .navbar-content {
-        max-width: 1400px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      
-      .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-      }
-      
-      .nav-links a {
-        text-decoration: none;
-        color: var(--text-primary);
-        font-weight: 500;
-        transition: color 0.3s;
-      }
-      
-      .nav-links a:hover {
-        color: var(--primary-color);
-      }
-      
-      .theme-toggle {
-        background: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: transform 0.2s, background 0.3s;
-      }
-      
-      .theme-toggle:hover {
-        transform: scale(1.05);
-        background: var(--secondary-color);
-      }
-      
-      .container {
-        max-width: 1400px;
-        margin: 2rem auto;
-        padding: 0 2rem 2rem;
-      }
-      
-      .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
-      }
-      
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statistik TBC - Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    /* KEEP ALL YOUR CSS AS IS - don't change the CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #1e3a8a;
+      --secondary-color: #d97706;
+      --accent-color: #fbbf24;
+      --success-color: #059669;
+      --warning-color: #f59e0b;
+      --danger-color: #dc2626;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --bg-primary: #f8fafc;
+      --bg-card: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --border: #e5e7eb;
+    }
+
+    [data-theme="dark"] {
+      --primary-color: #3b82f6;
+      --secondary-color: #f59e0b;
+      --accent-color: #fbbf24;
+      --success-color: #10b981;
+      --warning-color: #fbbf24;
+      --danger-color: #ef4444;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --border: #334155;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      color: var(--text-primary);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .navbar {
+      background: var(--bg-card);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px var(--shadow);
+      border-bottom: 2px solid var(--primary-color);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+
+    .theme-toggle {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      background: var(--secondary-color);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem 2rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px var(--shadow);
+      border: 1px solid var(--border);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px var(--shadow);
+    }
+
+    .stat-card h3 {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-card .number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-card .number.green {
+      background: linear-gradient(135deg, #059669, #10b981);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card .number.yellow {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card .number.red {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card .number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Untuk dark theme */
+    [data-theme="dark"] .stat-card .number.green {
+      background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    [data-theme="dark"] .stat-card .number.yellow {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+
+    [data-theme="dark"] .stat-card .number.red {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+    }
+
+    .stat-card .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    .evaluation-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      color: white;
+      box-shadow: 0 8px 30px var(--shadow);
+    }
+
+    .evaluation-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .eval-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .eval-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .eval-card h3 {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .eval-card .score {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+    }
+
+    .eval-card .label {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .no-data-message {
+      text-align: center;
+      padding: 3rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .no-data-message h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 15px var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .chart-card h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    .chart-container.large {
+      height: 400px;
+    }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .confusion-matrix {
+      overflow-x: auto;
+    }
+
+    .confusion-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 8px;
+      margin-top: 1rem;
+    }
+
+    .confusion-table th,
+    .confusion-table td {
+      padding: 1rem;
+      text-align: center;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .confusion-table th {
+      background: var(--primary-color);
+      color: white;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .confusion-table td {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+    }
+
+    .confusion-table td.correct {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      font-weight: bold;
+    }
+
+    .confusion-table td.incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger-color);
+    }
+
+    .table-card {
+      background: var(--bg-card);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 15px var(--shadow);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .table-card h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      color: var(--text-primary);
+    }
+
+    .badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .badge-rendah {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    [data-theme="dark"] .badge-rendah {
+      background: #064e3b;
+      color: #6ee7b7;
+    }
+
+    .badge-sedang {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    [data-theme="dark"] .badge-sedang {
+      background: #78350f;
+      color: #fcd34d;
+    }
+
+    .badge-tinggi {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    [data-theme="dark"] .badge-tinggi {
+      background: #7f1d1d;
+      color: #fca5a5;
+    }
+
+    @media (max-width: 768px) {
       .page-title {
-        font-size: 2.5rem;
-        font-weight: bold;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 0.5rem;
-      }
-      
-      .page-subtitle {
-        color: var(--text-secondary);
-        font-size: 1.1rem;
-      }
-      
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-      
-      .stat-card {
-        background: var(--bg-card);
-        border-radius: 15px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 15px var(--shadow);
-        border: 1px solid var(--border);
-        transition: transform 0.3s, box-shadow 0.3s;
-        position: relative;
-        overflow: hidden;
-      }
-      
-      .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      }
-      
-      .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px var(--shadow);
-      }
-      
-      .stat-card h3 {
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      
-      .stat-card .number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      
-      .stat-card .number.green {
-        background: linear-gradient(135deg, #059669, #10b981);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      
-      .stat-card .number.yellow {
-        background: linear-gradient(135deg, #d97706, #f59e0b);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      
-      .stat-card .number.red {
-        background: linear-gradient(135deg, #dc2626, #ef4444);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-size: 2rem;
       }
 
-      .stat-card .subtitle {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        margin-top: 0.5rem;
-      }
-      
-      /* Evaluation Section */
-      .evaluation-section {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        color: white;
-        box-shadow: 0 8px 30px var(--shadow);
+      .nav-links {
+        gap: 1rem;
       }
 
-      .evaluation-section h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
+      .charts-row {
+        grid-template-columns: 1fr;
       }
 
       .eval-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: 1fr;
       }
 
-      .eval-card {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        padding: 1.5rem;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+      .container {
+        padding: 0 1rem 2rem;
       }
+    }
+  </style>
+</head>
 
-      .eval-card h3 {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo">🏥 TBC Detection</div>
+      <div class="nav-links">
+        <a href="/">Beranda</a>
+        <a href="/statistik">Statistik</a>
+        <a href="/deteksi">Deteksi</a>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <span id="theme-icon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </nav>
 
-      .eval-card .score {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin: 0.5rem 0;
-      }
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Statistik Deteksi TBC</h1>
+      <p class="page-subtitle">Dashboard Pemantauan, Analisis Data & Evaluasi Model</p>
+    </div>
 
-      .eval-card .label {
-        font-size: 0.85rem;
-        opacity: 0.8;
-      }
-
-      .no-data-message {
-        text-align: center;
-        padding: 3rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        backdrop-filter: blur(10px);
-      }
-
-      .no-data-message h3 {
-        font-size: 1.3rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      .chart-card {
-        background: var(--bg-card);
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 4px 15px var(--shadow);
-        border: 1px solid var(--border);
-        margin-bottom: 2rem;
-      }
-      
-      .chart-card h2 {
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-        font-size: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      
-      .chart-container {
-        position: relative;
-        height: 300px;
-      }
-
-      .chart-container.large {
-        height: 400px;
-      }
-      
-      .charts-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .confusion-matrix {
-        overflow-x: auto;
-      }
-
-      .confusion-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 8px;
-        margin-top: 1rem;
-      }
-
-      .confusion-table th,
-      .confusion-table td {
-        padding: 1rem;
-        text-align: center;
-        border-radius: 8px;
-        font-weight: 600;
-      }
-
-      .confusion-table th {
-        background: var(--primary-color);
-        color: white;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-      }
-
-      .confusion-table td {
-        background: var(--bg-card);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-        font-size: 1.1rem;
-      }
-
-      .confusion-table td.correct {
-        background: linear-gradient(135deg, #059669, #10b981);
-        color: white;
-        font-weight: bold;
-      }
-
-      .confusion-table td.incorrect {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--danger-color);
-      }
-      
-      .table-card {
-        background: var(--bg-card);
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 4px 15px var(--shadow);
-        border: 1px solid var(--border);
-        overflow-x: auto;
-      }
-
-      .table-card h2 {
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-        font-size: 1.5rem;
-      }
-      
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      
-      th,
-      td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
-      }
-      
-      th {
-        background: var(--primary-color);
-        color: white;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-      }
-      
-      td {
-        color: var(--text-primary);
-      }
-      
-      .badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: inline-block;
-      }
-      
-      .badge-rendah {
-        background: #d1fae5;
-        color: #065f46;
-      }
-      
-      [data-theme="dark"] .badge-rendah {
-        background: #064e3b;
-        color: #6ee7b7;
-      }
-      
-      .badge-sedang {
-        background: #fef3c7;
-        color: #92400e;
-      }
-      
-      [data-theme="dark"] .badge-sedang {
-        background: #78350f;
-        color: #fcd34d;
-      }
-      
-      .badge-tinggi {
-        background: #fee2e2;
-        color: #991b1b;
-      }
-      
-      [data-theme="dark"] .badge-tinggi {
-        background: #7f1d1d;
-        color: #fca5a5;
-      }
-      
-      @media (max-width: 768px) {
-        .page-title {
-          font-size: 2rem;
-        }
-        
-        .nav-links {
-          gap: 1rem;
-        }
-        
-        .charts-row {
-          grid-template-columns: 1fr;
-        }
-
-        .eval-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .container {
-          padding: 0 1rem 2rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <nav class="navbar">
-      <div class="navbar-content">
-        <div class="logo">🏥 TBC Detection</div>
-        <div class="nav-links">
-          <a href="/">Beranda</a>
-          <a href="/statistik">Statistik</a>
-          <button class="theme-toggle" onclick="toggleTheme()">
-            <span id="theme-icon">🌙</span>
-          </button>
+    <!-- Evaluation Metrics Section -->
+    {% if stats.evaluation.has_data %}
+    <div class="evaluation-section">
+      <h2>📊 Evaluasi Performa Model</h2>
+      <div class="eval-grid">
+        <div class="eval-card">
+          <h3>Accuracy</h3>
+          <div class="score">{{ stats.evaluation.accuracy }}%</div>
+          <div class="label">Ketepatan Prediksi</div>
+        </div>
+        <div class="eval-card">
+          <h3>F1-Score</h3>
+          <div class="score">{{ stats.evaluation.f1_score }}%</div>
+          <div class="label">Weighted Average</div>
+        </div>
+        <div class="eval-card">
+          <h3>Precision</h3>
+          <div class="score">{{ stats.evaluation.precision }}%</div>
+          <div class="label">Presisi Deteksi</div>
+        </div>
+        <div class="eval-card">
+          <h3>Recall</h3>
+          <div class="score">{{ stats.evaluation.recall }}%</div>
+          <div class="label">Sensitivitas</div>
+        </div>
+        <div class="eval-card">
+          <h3>Data Evaluated</h3>
+          <div class="score">{{ stats.evaluation.total_evaluated }}</div>
+          <div class="label">Total Sampel</div>
         </div>
       </div>
-    </nav>
-
-    <div class="container">
-      <div class="page-header">
-        <h1 class="page-title">Statistik Deteksi TBC</h1>
-        <p class="page-subtitle">Dashboard Pemantauan, Analisis Data & Evaluasi Model</p>
+    </div>
+    {% else %}
+    <div class="evaluation-section">
+      <div class="no-data-message">
+        <h3>⚠️ Data Evaluasi Belum Tersedia</h3>
+        <p>{{ stats.evaluation.message if stats.evaluation.message else 'Tidak cukup data dengan ground truth untuk
+          evaluasi' }}</p>
       </div>
+    </div>
+    {% endif %}
 
-      <!-- Evaluation Metrics Section -->
-      {% if stats.evaluation.has_data %}
-      <div class="evaluation-section">
-        <h2>📊 Evaluasi Performa Model</h2>
-        <div class="eval-grid">
-          <div class="eval-card">
-            <h3>Accuracy</h3>
-            <div class="score">{{ stats.evaluation.accuracy }}%</div>
-            <div class="label">Ketepatan Prediksi</div>
-          </div>
-          <div class="eval-card">
-            <h3>F1-Score</h3>
-            <div class="score">{{ stats.evaluation.f1_score }}%</div>
-            <div class="label">Weighted Average</div>
-          </div>
-          <div class="eval-card">
-            <h3>Precision</h3>
-            <div class="score">{{ stats.evaluation.precision }}%</div>
-            <div class="label">Presisi Deteksi</div>
-          </div>
-          <div class="eval-card">
-            <h3>Recall</h3>
-            <div class="score">{{ stats.evaluation.recall }}%</div>
-            <div class="label">Sensitivitas</div>
-          </div>
-          <div class="eval-card">
-            <h3>Data Evaluated</h3>
-            <div class="score">{{ stats.evaluation.total_evaluated }}</div>
-            <div class="label">Total Sampel</div>
-          </div>
-        </div>
+    <!-- General Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Pasien</h3>
+        <div class="number">{{ stats.total }}</div>
+        <div class="subtitle">Seluruh Konsultasi</div>
       </div>
-      {% else %}
-      <div class="evaluation-section">
-        <div class="no-data-message">
-          <h3>⚠️ Data Evaluasi Belum Tersedia</h3>
-          <p>{{ stats.evaluation.message }}</p>
-        </div>
+      <div class="stat-card">
+        <h3>Risiko Tinggi</h3>
+        <div class="number red">{{ stats.tinggi }}</div>
+        <div class="subtitle">Perlu Tindakan Segera</div>
       </div>
-      {% endif %}
-
-      <!-- General Statistics -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <h3>Total Pasien</h3>
-          <div class="number">{{ stats.total }}</div>
-          <div class="subtitle">Seluruh Konsultasi</div>
-        </div>
-        <div class="stat-card">
-          <h3>Risiko Tinggi</h3>
-          <div class="number red">{{ stats.tinggi }}</div>
-          <div class="subtitle">Perlu Tindakan Segera</div>
-        </div>
-        <div class="stat-card">
-          <h3>Risiko Sedang</h3>
-          <div class="number yellow">{{ stats.sedang }}</div>
-          <div class="subtitle">Pemantauan Ketat</div>
-        </div>
-        <div class="stat-card">
-          <h3>Risiko Rendah</h3>
-          <div class="number green">{{ stats.rendah }}</div>
-          <div class="subtitle">Monitor Berkala</div>
-        </div>
+      <div class="stat-card">
+        <h3>Risiko Sedang</h3>
+        <div class="number yellow">{{ stats.sedang }}</div>
+        <div class="subtitle">Pemantauan Ketat</div>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <h3>Rata-rata Skor</h3>
-          <div class="number">{{ stats.avg_score }}</div>
-          <div class="subtitle">Skor Deteksi</div>
-        </div>
-        <div class="stat-card">
-          <h3>Laki-laki</h3>
-          <div class="number">{{ stats.laki_laki }}</div>
-          <div class="subtitle">Pasien Pria</div>
-        </div>
-        <div class="stat-card">
-          <h3>Perempuan</h3>
-          <div class="number">{{ stats.perempuan }}</div>
-          <div class="subtitle">Pasien Wanita</div>
-        </div>
-        <div class="stat-card">
-          <h3>Risiko Minimal</h3>
-          <div class="number green">{{ stats.minimal }}</div>
-          <div class="subtitle">Gejala Ringan</div>
-        </div>
-      </div>
-
-      <!-- F1-Score Per Class Chart -->
-      {% if stats.evaluation.has_data %}
-      <div class="chart-card">
-        <h2>🎯 F1-Score Per Kategori Risiko</h2>
-        <div class="chart-container">
-          <canvas id="f1ScoreChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Confusion Matrix -->
-      <div class="chart-card">
-        <h2>📈 Confusion Matrix</h2>
-        <div class="confusion-matrix">
-          <table class="confusion-table">
-            <thead>
-              <tr>
-                <th>Actual \ Predicted</th>
-                {% for label in stats.evaluation.labels %}
-                <th>{{ label.replace('RISIKO ', '') }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in range(stats.evaluation.labels|length) %}
-              <tr>
-                <th>{{ stats.evaluation.labels[i].replace('RISIKO ', '') }}</th>
-                {% for j in range(stats.evaluation.labels|length) %}
-                <td class="{% if i == j %}correct{% elif stats.evaluation.confusion_matrix[i][j] > 0 %}incorrect{% endif %}">
-                  {{ stats.evaluation.confusion_matrix[i][j] }}
-                </td>
-                {% endfor %}
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Risk Distribution -->
-      <div class="chart-card">
-        <h2>📊 Distribusi Risiko TBC</h2>
-        <div class="chart-container large">
-          <canvas id="risikoChart"></canvas>
-        </div>
-      </div>
-
-      <div class="charts-row">
-        <div class="chart-card">
-          <h2>👥 Distribusi Kelompok Umur</h2>
-          <div class="chart-container">
-            <canvas id="umurChart"></canvas>
-          </div>
-        </div>
-        <div class="chart-card">
-          <h2>📍 Top 5 Lokasi</h2>
-          <div class="chart-container">
-            <canvas id="lokasiChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <h2>🔬 Jenis TBC yang Terdeteksi</h2>
-        <div class="chart-container">
-          <canvas id="jenisChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Recent Patients Table -->
-      <div class="table-card">
-        <h2>📋 Data Pasien Terbaru (Anonim)</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Kelompok Umur</th>
-              <th>Jenis Kelamin</th>
-              <th>Lokasi</th>
-              <th>Skor</th>
-              <th>Level Risiko</th>
-              <th>Tanggal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for consultation, user in stats.recent_consultations %}
-            <tr>
-              <td>
-                {% if user.usia < 18 %} 0-17 tahun 
-                {% elif user.usia < 30 %} 18-29 tahun 
-                {% elif user.usia < 45 %} 30-44 tahun 
-                {% elif user.usia < 60 %} 45-59 tahun 
-                {% else %} 60+ tahun 
-                {% endif %}
-              </td>
-              <td>{{ user.jenis_kelamin }}</td>
-              <td>{{ user.lokasi }}</td>
-              <td><strong>{{ consultation.skor_total }}</strong></td>
-              <td>
-                {% if 'MINIMAL' in consultation.status_deteksi %}
-                <span class="badge badge-rendah">{{ consultation.status_deteksi }}</span>
-                {% elif 'RENDAH' in consultation.status_deteksi %}
-                <span class="badge badge-rendah">{{ consultation.status_deteksi }}</span>
-                {% elif 'SEDANG' in consultation.status_deteksi %}
-                <span class="badge badge-sedang">{{ consultation.status_deteksi }}</span>
-                {% else %}
-                <span class="badge badge-tinggi">{{ consultation.status_deteksi }}</span>
-                {% endif %}
-              </td>
-              <td>{{ consultation.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <div class="stat-card">
+        <h3>Risiko Rendah</h3>
+        <div class="number green">{{ stats.rendah }}</div>
+        <div class="subtitle">Monitor Berkala</div>
       </div>
     </div>
 
-    <script id="stats-json" type="application/json">
-      {
-          "risiko": {
-              "tinggi": {{ stats.tinggi }},
-              "sedang": {{ stats.sedang }},
-              "rendah": {{ stats.rendah }},
-              "minimal": {{ stats.minimal }}
-          },
-          "umur": {
-              "u0_17": {{ stats.umur_0_17 or 0 }},
-              "u18_29": {{ stats.umur_18_29 or 0 }},
-              "u30_44": {{ stats.umur_30_44 or 0 }},
-              "u45_59": {{ stats.umur_45_59 or 0 }},
-              "u60p": {{ stats.umur_60_plus or 0 }}
-          },
-          "lokasi": [
-              {% for lokasi, jumlah in stats.lokasi_stats %}
-                  {"lokasi": "{{ lokasi }}", "jumlah": {{ jumlah }} }{% if not loop.last %},{% endif %}
-              {% endfor %}
-          ],
-          "jenis_tbc": [
-              {% for jenis, jumlah in stats.jenis_tbc_stats %}
-                  {"jenis": "{{ jenis }}", "jumlah": {{ jumlah }} }{% if not loop.last %},{% endif %}
-              {% endfor %}
-          ],
-          "evaluation": {
-              "has_data": {{ stats.evaluation.has_data|lower }},
-              "f1_per_class": {{ stats.evaluation.f1_per_class|tojson if stats.evaluation.has_data else '{}' }}
-          }
-      }
-    </script>
-    <script>
-      // Theme Toggle
-      function toggleTheme() {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        html.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        
-        document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
-        
-        updateChartColors();
-      }
-      
-      // Load saved theme
-      window.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-      });
-      
-      // Get current theme colors
-      function getThemeColors() {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        return {
-          primary: isDark ? '#3b82f6' : '#1e3a8a',
-          secondary: isDark ? '#f59e0b' : '#d97706',
-          accent: '#fbbf24',
-          text: isDark ? '#f3f4f6' : '#1f2937',
-          gridColor: isDark ? '#334155' : '#e5e7eb'
-        };
-      }
-      
-      // Parse stats from JSON
-      const STATS = JSON.parse(document.getElementById("stats-json").textContent);
-      
-      let charts = {};
-      
-      // Chart 1: F1-Score Per Class
-      if (STATS.evaluation.has_data) {
-        const f1ScoreCtx = document.getElementById('f1ScoreChart');
-        const f1Data = STATS.evaluation.f1_per_class;
-        const f1Labels = Object.keys(f1Data).map(label => label.replace('RISIKO ', ''));
-        const f1Values = Object.values(f1Data);
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Rata-rata Skor</h3>
+        <div class="number">{{ stats.avg_score }}</div>
+        <div class="subtitle">Skor Deteksi</div>
+      </div>
+      <div class="stat-card">
+        <h3>Laki-laki</h3>
+        <div class="number">{{ stats.laki_laki }}</div>
+        <div class="subtitle">Pasien Pria</div>
+      </div>
+      <div class="stat-card">
+        <h3>Perempuan</h3>
+        <div class="number">{{ stats.perempuan }}</div>
+        <div class="subtitle">Pasien Wanita</div>
+      </div>
+      <div class="stat-card">
+        <h3>Risiko Minimal</h3>
+        <div class="number green">{{ stats.minimal }}</div>
+        <div class="subtitle">Gejala Ringan</div>
+      </div>
+    </div>
 
-        charts.f1Score = new Chart(f1ScoreCtx, {
-          type: 'bar',
-          data: {
-            labels: f1Labels,
-            datasets: [{
-              label: 'F1-Score (%)',
-              data: f1Values,
-              backgroundColor: [
-                '#28a745',
-                '#17a2b8',
-                '#ffc107',
-                '#dc3545'
-              ],
-              borderRadius: 8,
-              borderWidth: 2,
-              borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                max: 100,
-                ticks: { 
-                  color: getThemeColors().text,
-                  callback: function(value) {
-                    return value + '%';
+    <!-- Risk Distribution -->
+    <div class="chart-card">
+      <h2>📊 Distribusi Risiko TBC</h2>
+      <div class="chart-container large">
+        <canvas id="risikoChart"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <h2>👥 Distribusi Kelompok Umur</h2>
+        <div class="chart-container">
+          <canvas id="umurChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h2>📍 Top 5 Lokasi</h2>
+        <div class="chart-container">
+          <canvas id="lokasiChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2>🔬 Jenis TBC yang Terdeteksi</h2>
+      <div class="chart-container">
+        <canvas id="jenisChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Patients Table -->
+    <div class="table-card">
+      <h2>📋 Data Pasien Terbaru (Anonim)</h2>
+      {% if stats.recent_consultations %}
+      <table>
+        <thead>
+          <tr>
+            <th>Kelompok Umur</th>
+            <th>Jenis Kelamin</th>
+            <th>Lokasi</th>
+            <th>Skor</th>
+            <th>Level Risiko</th>
+            <th>Tanggal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for consultation, user in stats.recent_consultations %}
+          <tr>
+            <td>
+              {% if user.usia < 18 %}0-17 tahun {% elif user.usia < 30 %}18-29 tahun {% elif user.usia < 45 %}30-44
+                tahun {% elif user.usia < 60 %}45-59 tahun {% else %}60+ tahun {% endif %} </td>
+            <td>{{ user.jenis_kelamin }}</td>
+            <td>{{ user.lokasi }}</td>
+            <td><strong>{{ consultation.skor_total }}</strong></td>
+            <td>
+              {% if 'MINIMAL' in consultation.status_deteksi %}
+              <span class="badge badge-rendah">{{ consultation.status_deteksi }}</span>
+              {% elif 'RENDAH' in consultation.status_deteksi %}
+              <span class="badge badge-rendah">{{ consultation.status_deteksi }}</span>
+              {% elif 'SEDANG' in consultation.status_deteksi %}
+              <span class="badge badge-sedang">{{ consultation.status_deteksi }}</span>
+              {% else %}
+              <span class="badge badge-tinggi">{{ consultation.status_deteksi }}</span>
+              {% endif %}
+            </td>
+            <td>{{ consultation.created_at.strftime('%d/%m/%Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        Tidak ada data konsultasi terbaru
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script id="stats-json" type="application/json">
+    {
+      "risiko": {
+        "tinggi": {{ stats.tinggi }},
+        "sedang": {{ stats.sedang }},
+        "rendah": {{ stats.rendah }},
+        "minimal": {{ stats.minimal }}
+      },
+      "umur": {
+        "u0_17": {{ stats.umur_0_17 }},
+        "u18_29": {{ stats.umur_18_29 }},
+        "u30_44": {{ stats.umur_30_44 }},
+        "u45_59": {{ stats.umur_45_59 }},
+        "u60p": {{ stats.umur_60_plus }}
+      },
+      "lokasi": {{ stats.lokasi_stats|tojson }},
+      "jenis_tbc": {{ stats.jenis_tbc_stats|tojson }},
+      "evaluation": {
+        "has_data": {{ stats.evaluation.has_data|lower }},
+        "f1_per_class": {{ stats.evaluation.f1_per_class|tojson if stats.evaluation.has_data else '{}' }}
+      }
+    }
+  </script>
+
+  <script>
+    // Theme Toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      updateChartColors();
+    }
+
+    // Load saved theme
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+      initCharts();
+    });
+
+    // Get theme colors
+    function getThemeColors() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      return {
+        primary: isDark ? '#3b82f6' : '#1e3a8a',
+        secondary: isDark ? '#f59e0b' : '#d97706',
+        text: isDark ? '#f3f4f6' : '#1f2937',
+        gridColor: isDark ? '#334155' : '#e5e7eb',
+        background: isDark ? '#1e293b' : '#ffffff'
+      };
+    }
+
+    // Initialize all charts
+    function initCharts() {
+      try {
+        const STATS = JSON.parse(document.getElementById("stats-json").textContent);
+        console.log("Chart data loaded:", STATS);
+
+        window.allCharts = {};
+
+        // Chart 1: Risiko Distribution (Doughnut)
+        const risikoCtx = document.getElementById('risikoChart');
+        if (risikoCtx) {
+          window.allCharts.risiko = new Chart(risikoCtx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Risiko Tinggi', 'Risiko Sedang', 'Risiko Rendah', 'Risiko Minimal'],
+              datasets: [{
+                data: [
+                  STATS.risiko.tinggi,
+                  STATS.risiko.sedang,
+                  STATS.risiko.rendah,
+                  STATS.risiko.minimal
+                ],
+                backgroundColor: ['#dc3545', '#ffc107', '#17a2b8', '#28a745'],
+                borderWidth: 3,
+                borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    color: getThemeColors().text,
+                    font: { size: 13 },
+                    padding: 15
                   }
                 },
-                grid: { color: getThemeColors().gridColor }
-              },
-              x: {
-                ticks: { color: getThemeColors().text },
-                grid: { color: getThemeColors().gridColor }
-              }
-            },
-            plugins: {
-              legend: {
-                labels: { 
-                  color: getThemeColors().text,
-                  font: { size: 13 }
-                }
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    return 'F1-Score: ' + context.parsed.y.toFixed(2) + '%';
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                      const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                      return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                    }
                   }
                 }
               }
             }
-          }
-        });
-      }
+          });
+        }
 
-      // Chart 2: Risiko Distribution
-      const risikoCtx = document.getElementById('risikoChart');
-      charts.risiko = new Chart(risikoCtx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Risiko Tinggi', 'Risiko Sedang', 'Risiko Rendah', 'Risiko Minimal'],
-          datasets: [{
-            data: [
-              STATS.risiko.tinggi,
-              STATS.risiko.sedang,
-              STATS.risiko.rendah,
-              STATS.risiko.minimal
-            ],
-            backgroundColor: ['#dc3545', '#ffc107', '#17a2b8', '#28a745'],
-            borderWidth: 3,
-            borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: getThemeColors().text,
-                font: { size: 13 },
-                padding: 15
-              }
+        // Chart 2: Age Distribution (Bar)
+        const umurCtx = document.getElementById('umurChart');
+        if (umurCtx) {
+          window.allCharts.umur = new Chart(umurCtx, {
+            type: 'bar',
+            data: {
+              labels: ['0-17 tahun', '18-29 tahun', '30-44 tahun', '45-59 tahun', '60+ tahun'],
+              datasets: [{
+                label: 'Jumlah Pasien',
+                data: [
+                  STATS.umur.u0_17,
+                  STATS.umur.u18_29,
+                  STATS.umur.u30_44,
+                  STATS.umur.u45_59,
+                  STATS.umur.u60p
+                ],
+                backgroundColor: getThemeColors().primary,
+                borderRadius: 8,
+                borderWidth: 2,
+                borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+              }]
             },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = ((context.parsed / total) * 100).toFixed(1);
-                  return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { color: getThemeColors().text },
+                  grid: { color: getThemeColors().gridColor }
+                },
+                x: {
+                  ticks: { color: getThemeColors().text },
+                  grid: { color: getThemeColors().gridColor }
+                }
+              },
+              plugins: {
+                legend: {
+                  labels: {
+                    color: getThemeColors().text,
+                    font: { size: 13 }
+                  }
                 }
               }
             }
+          });
+        }
+
+        // Chart 3: Top 5 Lokasi (Horizontal Bar)
+        const lokasiCtx = document.getElementById('lokasiChart');
+        if (lokasiCtx && STATS.lokasi) {
+          const lokasiLabels = STATS.lokasi.map(item => item.lokasi);
+          const lokasiValues = STATS.lokasi.map(item => item.jumlah);
+
+          window.allCharts.lokasi = new Chart(lokasiCtx, {
+            type: 'bar',
+            data: {
+              labels: lokasiLabels,
+              datasets: [{
+                label: 'Jumlah Kasus',
+                data: lokasiValues,
+                backgroundColor: getThemeColors().secondary,
+                borderRadius: 8,
+                borderWidth: 2,
+                borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+              }]
+            },
+            options: {
+              indexAxis: 'y',
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  beginAtZero: true,
+                  ticks: { color: getThemeColors().text },
+                  grid: { color: getThemeColors().gridColor }
+                },
+                y: {
+                  ticks: { color: getThemeColors().text },
+                  grid: { color: getThemeColors().gridColor }
+                }
+              },
+              plugins: {
+                legend: {
+                  labels: {
+                    color: getThemeColors().text,
+                    font: { size: 13 }
+                  }
+                }
+              }
+            }
+          });
+        }
+
+        // Chart 4: Jenis TBC Distribution (Pie)
+        const jenisCtx = document.getElementById('jenisChart');
+        if (jenisCtx && STATS.jenis_tbc) {
+          const jenisLabels = STATS.jenis_tbc.map(item => item.jenis);
+          const jenisValues = STATS.jenis_tbc.map(item => item.jumlah);
+
+          window.allCharts.jenis = new Chart(jenisCtx, {
+            type: 'pie',
+            data: {
+              labels: jenisLabels,
+              datasets: [{
+                data: jenisValues,
+                backgroundColor: [
+                  '#1e3a8a', '#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe',
+                  '#fbbf24', '#f59e0b', '#dc2626', '#059669', '#10b981'
+                ],
+                borderWidth: 3,
+                borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'right',
+                  labels: {
+                    color: getThemeColors().text,
+                    font: { size: 12 },
+                    padding: 10
+                  }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                      const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                      return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+
+        console.log('All charts initialized successfully!');
+      } catch (error) {
+        console.error('Error initializing charts:', error);
+      }
+    }
+
+    // Update chart colors on theme change
+    function updateChartColors() {
+      if (!window.allCharts) return;
+
+      const colors = getThemeColors();
+
+      Object.keys(window.allCharts).forEach(key => {
+        const chart = window.allCharts[key];
+
+        if (chart.options && chart.options.scales) {
+          if (chart.options.scales.x) {
+            chart.options.scales.x.ticks.color = colors.text;
+            chart.options.scales.x.grid.color = colors.gridColor;
+          }
+          if (chart.options.scales.y) {
+            chart.options.scales.y.ticks.color = colors.text;
+            chart.options.scales.y.grid.color = colors.gridColor;
           }
         }
+
+        if (chart.options && chart.options.plugins && chart.options.plugins.legend) {
+          chart.options.plugins.legend.labels.color = colors.text;
+        }
+
+        if (chart.data && chart.data.datasets) {
+          chart.data.datasets.forEach(dataset => {
+            if (dataset.borderColor) {
+              dataset.borderColor = colors.text === '#f3f4f6' ? '#1e293b' : '#fff';
+            }
+          });
+        }
+
+        if (key === 'umur' && chart.data.datasets[0]) {
+          chart.data.datasets[0].backgroundColor = colors.primary;
+        }
+        if (key === 'lokasi' && chart.data.datasets[0]) {
+          chart.data.datasets[0].backgroundColor = colors.secondary;
+        }
+
+        chart.update();
       });
-
-      // Chart 3: Age Distribution
-      // Letakkan ini setelah bagian chart yang sudah ada di statistik.html
-// Ganti bagian Chart.js yang ada dengan code yang lebih optimal ini:
-
-// Chart 3: Age Distribution (Lanjutan dari code sebelumnya)
-const umurCtx = document.getElementById('umurChart');
-charts.umur = new Chart(umurCtx, {
-  type: 'bar',
-  data: {
-    labels: ['0-17 tahun', '18-29 tahun', '30-44 tahun', '45-59 tahun', '60+ tahun'],
-    datasets: [{
-      label: 'Jumlah Pasien',
-      data: [
-        STATS.umur.u0_17,
-        STATS.umur.u18_29,
-        STATS.umur.u30_44,
-        STATS.umur.u45_59,
-        STATS.umur.u60p
-      ],
-      backgroundColor: getThemeColors().primary,
-      borderRadius: 8,
-      borderWidth: 2,
-      borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { color: getThemeColors().text },
-        grid: { color: getThemeColors().gridColor }
-      },
-      x: {
-        ticks: { color: getThemeColors().text },
-        grid: { color: getThemeColors().gridColor }
-      }
-    },
-    plugins: {
-      legend: {
-        labels: { 
-          color: getThemeColors().text,
-          font: { size: 13 }
-        }
-      }
     }
-  }
-});
 
-// Chart 4: Lokasi Distribution
-const lokasiCtx = document.getElementById('lokasiChart');
-const lokasiLabels = STATS.lokasi.map(item => item.lokasi);
-const lokasiValues = STATS.lokasi.map(item => item.jumlah);
+    // Auto-refresh every 30 seconds (optional)
+    // setInterval(() => {
+    //   console.log('Auto-refreshing page...');
+    //   location.reload();
+    // }, 30000);
+  </script>
+</body>
 
-charts.lokasi = new Chart(lokasiCtx, {
-  type: 'horizontalBar',
-  data: {
-    labels: lokasiLabels,
-    datasets: [{
-      label: 'Jumlah Kasus',
-      data: lokasiValues,
-      backgroundColor: getThemeColors().secondary,
-      borderRadius: 8,
-      borderWidth: 2,
-      borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        beginAtZero: true,
-        ticks: { color: getThemeColors().text },
-        grid: { color: getThemeColors().gridColor }
-      },
-      y: {
-        ticks: { color: getThemeColors().text },
-        grid: { color: getThemeColors().gridColor }
-      }
-    },
-    plugins: {
-      legend: {
-        labels: { 
-          color: getThemeColors().text,
-          font: { size: 13 }
-        }
-      }
-    }
-  }
-});
-
-// Chart 5: Jenis TBC Distribution
-const jenisCtx = document.getElementById('jenisChart');
-const jenisLabels = STATS.jenis_tbc.map(item => item.jenis);
-const jenisValues = STATS.jenis_tbc.map(item => item.jumlah);
-
-charts.jenis = new Chart(jenisCtx, {
-  type: 'pie',
-  data: {
-    labels: jenisLabels,
-    datasets: [{
-      data: jenisValues,
-      backgroundColor: [
-        '#1e3a8a',
-        '#3b82f6',
-        '#60a5fa',
-        '#93c5fd',
-        '#dbeafe'
-      ],
-      borderWidth: 3,
-      borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'right',
-        labels: {
-          color: getThemeColors().text,
-          font: { size: 12 },
-          padding: 10
-        }
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-            const percentage = ((context.parsed / total) * 100).toFixed(1);
-            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
-          }
-        }
-      }
-    }
-  }
-});
-
-// Function to update all charts when theme changes
-function updateChartColors() {
-  const colors = getThemeColors();
-  
-  Object.keys(charts).forEach(key => {
-    const chart = charts[key];
-    
-    // Update scales colors
-    if (chart.options.scales) {
-      if (chart.options.scales.x) {
-        chart.options.scales.x.ticks.color = colors.text;
-        chart.options.scales.x.grid.color = colors.gridColor;
-      }
-      if (chart.options.scales.y) {
-        chart.options.scales.y.ticks.color = colors.text;
-        chart.options.scales.y.grid.color = colors.gridColor;
-      }
-    }
-    
-    // Update legend colors
-    if (chart.options.plugins && chart.options.plugins.legend) {
-      chart.options.plugins.legend.labels.color = colors.text;
-    }
-    
-    // Update border colors for datasets
-    chart.data.datasets.forEach(dataset => {
-      if (dataset.borderColor) {
-        dataset.borderColor = colors.text === '#f3f4f6' ? '#1e293b' : '#fff';
-      }
-    });
-    
-    // Update specific chart colors
-    if (key === 'umur' || key === 'lokasi') {
-      chart.data.datasets[0].backgroundColor = key === 'umur' ? colors.primary : colors.secondary;
-    }
-    
-    chart.update();
-  });
-}
-
-// Auto-refresh stats setiap 30 detik (opsional)
-// setInterval(() => {
-//   location.reload();
-// }, 30000);
-
-console.log('TBC Statistics Dashboard loaded successfully!');
+</html>
