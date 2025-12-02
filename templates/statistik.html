@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Statistik TBC</title>
+    <title>Statistik TBC - Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
       * {
@@ -16,6 +16,9 @@
         --primary-color: #1e3a8a;
         --secondary-color: #d97706;
         --accent-color: #fbbf24;
+        --success-color: #059669;
+        --warning-color: #f59e0b;
+        --danger-color: #dc2626;
         --text-primary: #1f2937;
         --text-secondary: #6b7280;
         --bg-primary: #f8fafc;
@@ -28,6 +31,9 @@
         --primary-color: #3b82f6;
         --secondary-color: #f59e0b;
         --accent-color: #fbbf24;
+        --success-color: #10b981;
+        --warning-color: #fbbf24;
+        --danger-color: #ef4444;
         --text-primary: #f3f4f6;
         --text-secondary: #9ca3af;
         --bg-primary: #0f172a;
@@ -49,11 +55,13 @@
         padding: 1rem 2rem;
         box-shadow: 0 2px 10px var(--shadow);
         border-bottom: 2px solid var(--primary-color);
-        transition: background 0.3s ease;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
       }
       
       .navbar-content {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
@@ -103,9 +111,9 @@
       }
       
       .container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 2rem auto;
-        padding: 2rem;
+        padding: 0 2rem 2rem;
       }
       
       .page-header {
@@ -182,21 +190,87 @@
         background: linear-gradient(135deg, #059669, #10b981);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
       }
       
       .stat-card .number.yellow {
         background: linear-gradient(135deg, #d97706, #f59e0b);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
       }
       
       .stat-card .number.red {
         background: linear-gradient(135deg, #dc2626, #ef4444);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
+      }
+
+      .stat-card .subtitle {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+      }
+      
+      /* Evaluation Section */
+      .evaluation-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 8px 30px var(--shadow);
+      }
+
+      .evaluation-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      .eval-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .eval-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .eval-card h3 {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .eval-card .score {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0.5rem 0;
+      }
+
+      .eval-card .label {
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .no-data-message {
+        text-align: center;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+      }
+
+      .no-data-message h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
       }
       
       .chart-card {
@@ -206,18 +280,75 @@
         box-shadow: 0 4px 15px var(--shadow);
         border: 1px solid var(--border);
         margin-bottom: 2rem;
-        transition: background 0.3s ease;
       }
       
       .chart-card h2 {
         color: var(--primary-color);
         margin-bottom: 1.5rem;
         font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
       
       .chart-container {
         position: relative;
         height: 300px;
+      }
+
+      .chart-container.large {
+        height: 400px;
+      }
+      
+      .charts-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .confusion-matrix {
+        overflow-x: auto;
+      }
+
+      .confusion-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 8px;
+        margin-top: 1rem;
+      }
+
+      .confusion-table th,
+      .confusion-table td {
+        padding: 1rem;
+        text-align: center;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+
+      .confusion-table th {
+        background: var(--primary-color);
+        color: white;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+      }
+
+      .confusion-table td {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+        font-size: 1.1rem;
+      }
+
+      .confusion-table td.correct {
+        background: linear-gradient(135deg, #059669, #10b981);
+        color: white;
+        font-weight: bold;
+      }
+
+      .confusion-table td.incorrect {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
       }
       
       .table-card {
@@ -227,6 +358,12 @@
         box-shadow: 0 4px 15px var(--shadow);
         border: 1px solid var(--border);
         overflow-x: auto;
+      }
+
+      .table-card h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
       }
       
       table {
@@ -259,6 +396,7 @@
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 600;
+        display: inline-block;
       }
       
       .badge-rendah {
@@ -291,13 +429,6 @@
         color: #fca5a5;
       }
       
-      .charts-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-      
       @media (max-width: 768px) {
         .page-title {
           font-size: 2rem;
@@ -309,6 +440,14 @@
         
         .charts-row {
           grid-template-columns: 1fr;
+        }
+
+        .eval-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          padding: 0 1rem 2rem;
         }
       }
     </style>
@@ -330,25 +469,71 @@
     <div class="container">
       <div class="page-header">
         <h1 class="page-title">Statistik Deteksi TBC</h1>
-        <p class="page-subtitle">Dashboard Pemantauan dan Analisis Data</p>
+        <p class="page-subtitle">Dashboard Pemantauan, Analisis Data & Evaluasi Model</p>
       </div>
 
+      <!-- Evaluation Metrics Section -->
+      {% if stats.evaluation.has_data %}
+      <div class="evaluation-section">
+        <h2>📊 Evaluasi Performa Model</h2>
+        <div class="eval-grid">
+          <div class="eval-card">
+            <h3>Accuracy</h3>
+            <div class="score">{{ stats.evaluation.accuracy }}%</div>
+            <div class="label">Ketepatan Prediksi</div>
+          </div>
+          <div class="eval-card">
+            <h3>F1-Score</h3>
+            <div class="score">{{ stats.evaluation.f1_score }}%</div>
+            <div class="label">Weighted Average</div>
+          </div>
+          <div class="eval-card">
+            <h3>Precision</h3>
+            <div class="score">{{ stats.evaluation.precision }}%</div>
+            <div class="label">Presisi Deteksi</div>
+          </div>
+          <div class="eval-card">
+            <h3>Recall</h3>
+            <div class="score">{{ stats.evaluation.recall }}%</div>
+            <div class="label">Sensitivitas</div>
+          </div>
+          <div class="eval-card">
+            <h3>Data Evaluated</h3>
+            <div class="score">{{ stats.evaluation.total_evaluated }}</div>
+            <div class="label">Total Sampel</div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="evaluation-section">
+        <div class="no-data-message">
+          <h3>⚠️ Data Evaluasi Belum Tersedia</h3>
+          <p>{{ stats.evaluation.message }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- General Statistics -->
       <div class="stats-grid">
         <div class="stat-card">
           <h3>Total Pasien</h3>
           <div class="number">{{ stats.total }}</div>
-        </div>
-        <div class="stat-card">
-          <h3>Risiko Rendah</h3>
-          <div class="number green">{{ stats.rendah }}</div>
-        </div>
-        <div class="stat-card">
-          <h3>Risiko Sedang</h3>
-          <div class="number yellow">{{ stats.sedang }}</div>
+          <div class="subtitle">Seluruh Konsultasi</div>
         </div>
         <div class="stat-card">
           <h3>Risiko Tinggi</h3>
           <div class="number red">{{ stats.tinggi }}</div>
+          <div class="subtitle">Perlu Tindakan Segera</div>
+        </div>
+        <div class="stat-card">
+          <h3>Risiko Sedang</h3>
+          <div class="number yellow">{{ stats.sedang }}</div>
+          <div class="subtitle">Pemantauan Ketat</div>
+        </div>
+        <div class="stat-card">
+          <h3>Risiko Rendah</h3>
+          <div class="number green">{{ stats.rendah }}</div>
+          <div class="subtitle">Monitor Berkala</div>
         </div>
       </div>
 
@@ -356,20 +541,68 @@
         <div class="stat-card">
           <h3>Rata-rata Skor</h3>
           <div class="number">{{ stats.avg_score }}</div>
+          <div class="subtitle">Skor Deteksi</div>
         </div>
         <div class="stat-card">
           <h3>Laki-laki</h3>
           <div class="number">{{ stats.laki_laki }}</div>
+          <div class="subtitle">Pasien Pria</div>
         </div>
         <div class="stat-card">
           <h3>Perempuan</h3>
           <div class="number">{{ stats.perempuan }}</div>
+          <div class="subtitle">Pasien Wanita</div>
+        </div>
+        <div class="stat-card">
+          <h3>Risiko Minimal</h3>
+          <div class="number green">{{ stats.minimal }}</div>
+          <div class="subtitle">Gejala Ringan</div>
         </div>
       </div>
 
+      <!-- F1-Score Per Class Chart -->
+      {% if stats.evaluation.has_data %}
+      <div class="chart-card">
+        <h2>🎯 F1-Score Per Kategori Risiko</h2>
+        <div class="chart-container">
+          <canvas id="f1ScoreChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Confusion Matrix -->
+      <div class="chart-card">
+        <h2>📈 Confusion Matrix</h2>
+        <div class="confusion-matrix">
+          <table class="confusion-table">
+            <thead>
+              <tr>
+                <th>Actual \ Predicted</th>
+                {% for label in stats.evaluation.labels %}
+                <th>{{ label.replace('RISIKO ', '') }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in range(stats.evaluation.labels|length) %}
+              <tr>
+                <th>{{ stats.evaluation.labels[i].replace('RISIKO ', '') }}</th>
+                {% for j in range(stats.evaluation.labels|length) %}
+                <td class="{% if i == j %}correct{% elif stats.evaluation.confusion_matrix[i][j] > 0 %}incorrect{% endif %}">
+                  {{ stats.evaluation.confusion_matrix[i][j] }}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Risk Distribution -->
       <div class="chart-card">
         <h2>📊 Distribusi Risiko TBC</h2>
-        <div class="chart-container">
+        <div class="chart-container large">
           <canvas id="risikoChart"></canvas>
         </div>
       </div>
@@ -396,6 +629,7 @@
         </div>
       </div>
 
+      <!-- Recent Patients Table -->
       <div class="table-card">
         <h2>📋 Data Pasien Terbaru (Anonim)</h2>
         <table>
@@ -422,7 +656,7 @@
               </td>
               <td>{{ user.jenis_kelamin }}</td>
               <td>{{ user.lokasi }}</td>
-              <td>{{ consultation.skor_total }}</td>
+              <td><strong>{{ consultation.skor_total }}</strong></td>
               <td>
                 {% if 'MINIMAL' in consultation.status_deteksi %}
                 <span class="badge badge-rendah">{{ consultation.status_deteksi }}</span>
@@ -466,7 +700,11 @@
               {% for jenis, jumlah in stats.jenis_tbc_stats %}
                   {"jenis": "{{ jenis }}", "jumlah": {{ jumlah }} }{% if not loop.last %},{% endif %}
               {% endfor %}
-          ]
+          ],
+          "evaluation": {
+              "has_data": {{ stats.evaluation.has_data|lower }},
+              "f1_per_class": {{ stats.evaluation.f1_per_class|tojson if stats.evaluation.has_data else '{}' }}
+          }
       }
     </script>
     <script>
@@ -508,7 +746,71 @@
       
       let charts = {};
       
-      // Chart 1: Risiko
+      // Chart 1: F1-Score Per Class
+      if (STATS.evaluation.has_data) {
+        const f1ScoreCtx = document.getElementById('f1ScoreChart');
+        const f1Data = STATS.evaluation.f1_per_class;
+        const f1Labels = Object.keys(f1Data).map(label => label.replace('RISIKO ', ''));
+        const f1Values = Object.values(f1Data);
+
+        charts.f1Score = new Chart(f1ScoreCtx, {
+          type: 'bar',
+          data: {
+            labels: f1Labels,
+            datasets: [{
+              label: 'F1-Score (%)',
+              data: f1Values,
+              backgroundColor: [
+                '#28a745',
+                '#17a2b8',
+                '#ffc107',
+                '#dc3545'
+              ],
+              borderRadius: 8,
+              borderWidth: 2,
+              borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: { 
+                  color: getThemeColors().text,
+                  callback: function(value) {
+                    return value + '%';
+                  }
+                },
+                grid: { color: getThemeColors().gridColor }
+              },
+              x: {
+                ticks: { color: getThemeColors().text },
+                grid: { color: getThemeColors().gridColor }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: { 
+                  color: getThemeColors().text,
+                  font: { size: 13 }
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return 'F1-Score: ' + context.parsed.y.toFixed(2) + '%';
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Chart 2: Risiko Distribution
       const risikoCtx = document.getElementById('risikoChart');
       charts.risiko = new Chart(risikoCtx, {
         type: 'doughnut',
@@ -531,175 +833,210 @@
           maintainAspectRatio: false,
           plugins: {
             legend: {
+              position: 'bottom',
               labels: {
                 color: getThemeColors().text,
-                font: { size: 12 }
+                font: { size: 13 },
+                padding: 15
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((context.parsed / total) * 100).toFixed(1);
+                  return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                }
               }
             }
           }
         }
       });
 
-      // Chart 2: Umur
-      const umurCtx = document.getElementById('umurChart');
-      charts.umur = new Chart(umurCtx, {
-        type: 'bar',
-        data: {
-          labels: ['0-17', '18-29', '30-44', '45-59', '60+'],
-          datasets: [{
-            label: 'Jumlah Kasus',
-            data: [
-              STATS.umur.u0_17,
-              STATS.umur.u18_29,
-              STATS.umur.u30_44,
-              STATS.umur.u45_59,
-              STATS.umur.u60p
-            ],
-            backgroundColor: getThemeColors().primary,
-            borderRadius: 8,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { color: getThemeColors().text },
-              grid: { color: getThemeColors().gridColor }
-            },
-            x: {
-              ticks: { color: getThemeColors().text },
-              grid: { color: getThemeColors().gridColor }
-            }
-          },
-          plugins: {
-            legend: {
-              labels: { color: getThemeColors().text }
-            }
-          }
-        }
-      });
+      // Chart 3: Age Distribution
+      // Letakkan ini setelah bagian chart yang sudah ada di statistik.html
+// Ganti bagian Chart.js yang ada dengan code yang lebih optimal ini:
 
-      // Chart 3: Lokasi
-      const lokasiLabels = STATS.lokasi.map((i) => i.lokasi);
-      const lokasiValues = STATS.lokasi.map((i) => i.jumlah);
-
-      const lokasiCtx = document.getElementById('lokasiChart');
-      charts.lokasi = new Chart(lokasiCtx, {
-        type: 'bar',
-        data: {
-          labels: lokasiLabels,
-          datasets: [{
-            label: 'Jumlah Kasus',
-            data: lokasiValues,
-            backgroundColor: getThemeColors().secondary,
-            borderRadius: 8,
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              ticks: { color: getThemeColors().text },
-              grid: { color: getThemeColors().gridColor }
-            },
-            x: {
-              ticks: { color: getThemeColors().text },
-              grid: { color: getThemeColors().gridColor }
-            }
-          },
-          plugins: {
-            legend: {
-              labels: { color: getThemeColors().text }
-            }
-          }
-        }
-      });
-
-      // Chart 4: Jenis TBC
-      const jenisLabels = STATS.jenis_tbc.map((i) => i.jenis);
-      const jenisValues = STATS.jenis_tbc.map((i) => i.jumlah);
-
-      const jenisCtx = document.getElementById('jenisChart');
-      charts.jenis = new Chart(jenisCtx, {
-        type: 'bar',
-        data: {
-          labels: jenisLabels,
-          datasets: [{
-            label: 'Jumlah Kasus',
-            data: jenisValues,
-            backgroundColor: '#4facfe',
-            borderRadius: 8,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { color: getThemeColors().text },
-              grid: { color: getThemeColors().gridColor }
-            },
-            x: {
-              ticks: { color: getThemeColors().text },
-              grid: { color: getThemeColors().gridColor }
-            }
-          },
-          plugins: {
-            legend: {
-              labels: { color: getThemeColors().text }
-            }
-          }
-        }
-      });
-      
-      function updateChartColors() {
-        const colors = getThemeColors();
-        const borderColor = colors.text === '#f3f4f6' ? '#1e293b' : '#fff';
-        
-        // Update all charts
-        Object.values(charts).forEach(chart => {
-          // Update grid colors
-          if (chart.options.scales) {
-            if (chart.options.scales.y) {
-              chart.options.scales.y.ticks.color = colors.text;
-              chart.options.scales.y.grid.color = colors.gridColor;
-            }
-            if (chart.options.scales.x) {
-              chart.options.scales.x.ticks.color = colors.text;
-              chart.options.scales.x.grid.color = colors.gridColor;
-            }
-          }
-          
-          // Update legend
-          if (chart.options.plugins.legend) {
-            chart.options.plugins.legend.labels.color = colors.text;
-          }
-          
-          // Update doughnut border color
-          if (chart.config.type === 'doughnut') {
-            chart.data.datasets[0].borderColor = borderColor;
-          }
-          
-          // Update bar colors for theme-dependent charts
-          if (chart.config.type === 'bar') {
-            if (chart.data.datasets[0].label === 'Jumlah Kasus') {
-              const canvas = chart.canvas;
-              if (canvas.id === 'umurChart') {
-                chart.data.datasets[0].backgroundColor = colors.primary;
-              } else if (canvas.id === 'lokasiChart') {
-                chart.data.datasets[0].backgroundColor = colors.secondary;
-              }
-            }
-          }
-          
-          chart.update();
-        });
+// Chart 3: Age Distribution (Lanjutan dari code sebelumnya)
+const umurCtx = document.getElementById('umurChart');
+charts.umur = new Chart(umurCtx, {
+  type: 'bar',
+  data: {
+    labels: ['0-17 tahun', '18-29 tahun', '30-44 tahun', '45-59 tahun', '60+ tahun'],
+    datasets: [{
+      label: 'Jumlah Pasien',
+      data: [
+        STATS.umur.u0_17,
+        STATS.umur.u18_29,
+        STATS.umur.u30_44,
+        STATS.umur.u45_59,
+        STATS.umur.u60p
+      ],
+      backgroundColor: getThemeColors().primary,
+      borderRadius: 8,
+      borderWidth: 2,
+      borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { color: getThemeColors().text },
+        grid: { color: getThemeColors().gridColor }
+      },
+      x: {
+        ticks: { color: getThemeColors().text },
+        grid: { color: getThemeColors().gridColor }
       }
-    </script>
-  </body>
-</html>
+    },
+    plugins: {
+      legend: {
+        labels: { 
+          color: getThemeColors().text,
+          font: { size: 13 }
+        }
+      }
+    }
+  }
+});
+
+// Chart 4: Lokasi Distribution
+const lokasiCtx = document.getElementById('lokasiChart');
+const lokasiLabels = STATS.lokasi.map(item => item.lokasi);
+const lokasiValues = STATS.lokasi.map(item => item.jumlah);
+
+charts.lokasi = new Chart(lokasiCtx, {
+  type: 'horizontalBar',
+  data: {
+    labels: lokasiLabels,
+    datasets: [{
+      label: 'Jumlah Kasus',
+      data: lokasiValues,
+      backgroundColor: getThemeColors().secondary,
+      borderRadius: 8,
+      borderWidth: 2,
+      borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: { color: getThemeColors().text },
+        grid: { color: getThemeColors().gridColor }
+      },
+      y: {
+        ticks: { color: getThemeColors().text },
+        grid: { color: getThemeColors().gridColor }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: { 
+          color: getThemeColors().text,
+          font: { size: 13 }
+        }
+      }
+    }
+  }
+});
+
+// Chart 5: Jenis TBC Distribution
+const jenisCtx = document.getElementById('jenisChart');
+const jenisLabels = STATS.jenis_tbc.map(item => item.jenis);
+const jenisValues = STATS.jenis_tbc.map(item => item.jumlah);
+
+charts.jenis = new Chart(jenisCtx, {
+  type: 'pie',
+  data: {
+    labels: jenisLabels,
+    datasets: [{
+      data: jenisValues,
+      backgroundColor: [
+        '#1e3a8a',
+        '#3b82f6',
+        '#60a5fa',
+        '#93c5fd',
+        '#dbeafe'
+      ],
+      borderWidth: 3,
+      borderColor: getThemeColors().text === '#f3f4f6' ? '#1e293b' : '#fff',
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          color: getThemeColors().text,
+          font: { size: 12 },
+          padding: 10
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = ((context.parsed / total) * 100).toFixed(1);
+            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+          }
+        }
+      }
+    }
+  }
+});
+
+// Function to update all charts when theme changes
+function updateChartColors() {
+  const colors = getThemeColors();
+  
+  Object.keys(charts).forEach(key => {
+    const chart = charts[key];
+    
+    // Update scales colors
+    if (chart.options.scales) {
+      if (chart.options.scales.x) {
+        chart.options.scales.x.ticks.color = colors.text;
+        chart.options.scales.x.grid.color = colors.gridColor;
+      }
+      if (chart.options.scales.y) {
+        chart.options.scales.y.ticks.color = colors.text;
+        chart.options.scales.y.grid.color = colors.gridColor;
+      }
+    }
+    
+    // Update legend colors
+    if (chart.options.plugins && chart.options.plugins.legend) {
+      chart.options.plugins.legend.labels.color = colors.text;
+    }
+    
+    // Update border colors for datasets
+    chart.data.datasets.forEach(dataset => {
+      if (dataset.borderColor) {
+        dataset.borderColor = colors.text === '#f3f4f6' ? '#1e293b' : '#fff';
+      }
+    });
+    
+    // Update specific chart colors
+    if (key === 'umur' || key === 'lokasi') {
+      chart.data.datasets[0].backgroundColor = key === 'umur' ? colors.primary : colors.secondary;
+    }
+    
+    chart.update();
+  });
+}
+
+// Auto-refresh stats setiap 30 detik (opsional)
+// setInterval(() => {
+//   location.reload();
+// }, 30000);
+
+console.log('TBC Statistics Dashboard loaded successfully!');

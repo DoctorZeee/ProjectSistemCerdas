@@ -3,23 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deteksi TBC</title>
+    <title>Deteksi TBC - Chatbot AI</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #d97706;
+            --accent-color: #fbbf24;
+            --success-color: #059669;
+            --warning-color: #f59e0b;
+            --danger-color: #dc2626;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --border: #e5e7eb;
+        }
+        
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --secondary-color: #f59e0b;
+            --accent-color: #fbbf24;
+            --success-color: #10b981;
+            --warning-color: #fbbf24;
+            --danger-color: #ef4444;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --border: #334155;
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
             min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
         }
+        
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--bg-card);
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px var(--shadow);
+            border-bottom: 2px solid var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
+        
         .navbar-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -27,148 +66,317 @@
             justify-content: space-between;
             align-items: center;
         }
+        
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #667eea;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
         .nav-links a {
-            margin-left: 2rem;
             text-decoration: none;
-            color: #333;
+            color: var(--text-primary);
             font-weight: 500;
+            transition: color 0.3s;
         }
-        .container {
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .theme-toggle {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, background 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--secondary-color);
+        }
+        
+        .chat-container {
             max-width: 800px;
             margin: 2rem auto;
-            padding: 2rem;
-        }
-        .form-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 2rem;
-        }
-        .form-card h2 {
-            color: #667eea;
-            margin-bottom: 1.5rem;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 500;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .question-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: none;
-        }
-        .question-card.active {
-            display: block;
-        }
-        .question-text {
-            font-size: 1.3rem;
-            color: #333;
-            margin-bottom: 1.5rem;
-        }
-        .btn-group {
+            padding: 0 1rem;
+            height: calc(100vh - 200px);
             display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+        
+        .chat-header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chat-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            box-shadow: 0 0 10px var(--shadow);
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
         }
-        .btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
+        
+        .message {
+            display: flex;
+            gap: 0.8rem;
+            animation: fadeIn 0.3s ease-in;
         }
-        .btn:hover {
-            transform: scale(1.05);
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .btn-yes {
-            background: #667eea;
+        
+        .message.bot {
+            align-self: flex-start;
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .message.user .message-avatar {
+            background: var(--success-color);
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 1rem 1.2rem;
+            border-radius: 15px;
+            line-height: 1.6;
+        }
+        
+        .message.bot .message-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
         }
-        .btn-no {
-            background: #e0e0e0;
-            color: #333;
-        }
-        .story-input {
-            width: 100%;
-            min-height: 150px;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-        }
-        .story-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .result-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        
+        .typing-indicator {
             display: none;
+            padding: 1rem 1.2rem;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            width: fit-content;
         }
-        .result-card.active {
+        
+        .typing-indicator.active {
             display: block;
         }
-        .result-level {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .level-rendah {
-            background: #d4edda;
-            color: #155724;
-        }
-        .level-sedang {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .level-tinggi {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .progress {
-            background: #e0e0e0;
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
             height: 8px;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            overflow: hidden;
+            border-radius: 50%;
+            background: var(--primary-color);
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
         }
-        .progress-bar {
-            background: #667eea;
-            height: 100%;
-            transition: width 0.3s;
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        
+        .chat-input-area {
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 -2px 10px var(--shadow);
+        }
+        
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-reply-btn {
+            padding: 0.6rem 1.2rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .quick-reply-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            font-size: 1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+        
+        .result-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .result-status {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+        
+        .result-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .result-list li:last-child {
+            border-bottom: none;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                height: calc(100vh - 150px);
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .chat-header h1 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -178,175 +386,463 @@
             <div class="logo">🏥 TBC Detection</div>
             <div class="nav-links">
                 <a href="/">Beranda</a>
-                <a href="/deteksi">Deteksi</a>
                 <a href="/statistik">Statistik</a>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span id="theme-icon">🌙</span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <div class="container">
-        <!-- Form Data Pasien -->
-        <div class="form-card" id="patient-form">
-            <h2>Data Pasien</h2>
-            <div class="form-group">
-                <label>Nama Lengkap</label>
-                <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
-            </div>
-            <div class="form-group">
-                <label>Umur</label>
-                <input type="number" id="umur" placeholder="Masukkan umur" required>
-            </div>
-            <div class="form-group">
-                <label>Jenis Kelamin</label>
-                <select id="jenis_kelamin" required>
-                    <option value="">Pilih jenis kelamin</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                </select>
-            </div>
-            <button class="btn btn-yes" onclick="startDetection()">Mulai Deteksi</button>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 Asisten Deteksi TBC</h1>
+            <p>Saya akan membantu Anda mendeteksi gejala TBC melalui percakapan</p>
         </div>
 
-        <!-- Pertanyaan -->
-        <div class="question-card" id="question-card">
-            <div class="progress">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-            <p class="question-text" id="question-text"></p>
-            <div class="btn-group">
-                <button class="btn btn-yes" onclick="answer(true)">Ya</button>
-                <button class="btn btn-no" onclick="answer(false)">Tidak</button>
-            </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be added here -->
         </div>
 
-        <!-- Input Cerita -->
-        <div class="question-card" id="story-card">
-            <h2>Ceritakan Gejala Anda</h2>
-            <p style="margin-bottom: 1rem; color: #666;">Jelaskan gejala yang Anda rasakan dengan detail (batuk, demam, keringat malam, dll)</p>
-            <textarea class="story-input" id="story" placeholder="Contoh: Saya mengalami batuk sudah 3 minggu, kadang batuk berdarah, sering demam dan berkeringat di malam hari..."></textarea>
-            <button class="btn btn-yes" style="margin-top: 1rem;" onclick="submitStory()">Analisis</button>
-        </div>
-
-        <!-- Hasil -->
-        <div class="result-card" id="result-card">
-            <h2>Hasil Deteksi</h2>
-            <div id="result-level" class="result-level"></div>
-            <div id="result-details"></div>
-            <button class="btn btn-yes" style="margin-top: 2rem;" onclick="location.reload()">Deteksi Ulang</button>
-            <a href="/statistik" class="btn btn-no" style="margin-top: 1rem; display: inline-block; text-align: center; text-decoration: none;">Lihat Statistik</a>
+        <div class="chat-input-area">
+            <div class="quick-replies" id="quick-replies">
+                <!-- Quick reply buttons will be added here -->
+            </div>
+            <div class="input-group">
+                <input type="text" id="user-input" placeholder="Ketik pesan Anda..." autocomplete="off">
+                <button class="send-btn" id="send-btn" onclick="sendMessage()">
+                    ➤
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentIndex = 0;
-        let currentScore = 0;
-        let patientData = {};
-
-        function startDetection() {
-            const nama = document.getElementById('nama').value;
-            const umur = document.getElementById('umur').value;
-            const jenis_kelamin = document.getElementById('jenis_kelamin').value;
-
-            if (!nama || !umur || !jenis_kelamin) {
-                alert('Mohon lengkapi semua data!');
-                return;
+        // State management
+        let conversationState = {
+            step: 0,
+            userData: {},
+            gejala: {},
+            faktorRisiko: {},
+            currentQuestion: null,
+            questions: {
+                gejala: [],
+                risiko: []
             }
+        };
 
-            patientData = { nama, umur, jenis_kelamin };
-            document.getElementById('patient-form').style.display = 'none';
-            document.getElementById('question-card').classList.add('active');
-            loadQuestion();
-        }
+        const conversationFlow = [
+            { type: 'greeting', key: 'greeting' },
+            { type: 'input', key: 'nama', question: 'Sebelum kita mulai, boleh saya tahu nama Anda?' },
+            { type: 'input', key: 'usia', question: 'Berapa usia Anda saat ini?' },
+            { type: 'choice', key: 'jenis_kelamin', question: 'Jenis kelamin Anda?', options: ['Laki-laki', 'Perempuan'] },
+            { type: 'input', key: 'lokasi', question: 'Anda tinggal di kota mana?' },
+            { type: 'gejala_intro', key: 'gejala_intro' },
+            { type: 'gejala', key: 'gejala' },
+            { type: 'risiko_intro', key: 'risiko_intro' },
+            { type: 'risiko', key: 'risiko' },
+            { type: 'cerita', key: 'cerita', question: 'Terakhir, bisa ceritakan kondisi kesehatan Anda secara detail? (Misalnya: kapan gejala mulai, seberapa parah, dll)' },
+            { type: 'analyze', key: 'analyze' }
+        ];
 
-        async function loadQuestion() {
-            const response = await fetch('/get_question', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ index: currentIndex, score: currentScore })
-            });
-
-            const data = await response.json();
-
-            if (data.type === 'question') {
-                document.getElementById('question-text').textContent = data.question;
-                currentQuestionValue = data.value;
-                updateProgress();
-            } else {
-                document.getElementById('question-card').classList.remove('active');
-                document.getElementById('story-card').classList.add('active');
-            }
-        }
-
-        function updateProgress() {
-            const progress = (currentIndex / 6) * 100;
-            document.getElementById('progress-bar').style.width = progress + '%';
-        }
-
-        function answer(isYes) {
-            if (isYes) {
-                currentScore += currentQuestionValue;
-            }
-            currentIndex++;
-            loadQuestion();
-        }
-
-        async function submitStory() {
-            const story = document.getElementById('story').value;
-
-            if (!story.trim()) {
-                alert('Mohon ceritakan gejala Anda!');
-                return;
-            }
-
-            const response = await fetch('/analyze_story', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...patientData,
-                    story: story,
-                    score: currentScore
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                displayResult(result);
-            } else {
-                alert('Terjadi kesalahan: ' + result.error);
-            }
-        }
-
-        function displayResult(result) {
-            document.getElementById('story-card').classList.remove('active');
-            document.getElementById('result-card').classList.add('active');
-
-            const levelEl = document.getElementById('result-level');
-            levelEl.textContent = result.level;
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
-            if (result.level.includes('Rendah')) {
-                levelEl.className = 'result-level level-rendah';
-            } else if (result.level.includes('Sedang')) {
-                levelEl.className = 'result-level level-sedang';
-            } else {
-                levelEl.className = 'result-level level-tinggi';
-            }
-
-            let detailsHTML = `
-                <p style="margin-bottom: 1rem;"><strong>Skor Total:</strong> ${result.score}</p>
-                <p style="margin-bottom: 1rem;"><strong>Saran:</strong> ${result.saran}</p>
-            `;
-
-            if (result.detected.length > 0) {
-                detailsHTML += '<p style="margin-top: 1.5rem;"><strong>Gejala yang Terdeteksi:</strong></p><ul style="margin-left: 1.5rem;">';
-                result.detected.forEach(item => {
-                    detailsHTML += `<li>${item.keyword} (bobot: ${item.value})</li>`;
-                });
-                detailsHTML += '</ul>';
-            }
-
-            document.getElementById('result-details').innerHTML = detailsHTML;
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
         }
+        
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            
+            initChat();
+        });
+
+        // Initialize chat
+        async function initChat() {
+            await loadQuestions();
+            startConversation();
+        }
+
+        // Load questions from API
+        async function loadQuestions() {
+            try {
+                const gejalaResponse = await fetch('/api/get_questions', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({type: 'gejala'})
+                });
+                const gejalaData = await gejalaResponse.json();
+                conversationState.questions.gejala = gejalaData.questions;
+
+                const risikoResponse = await fetch('/api/get_questions', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({type: 'risiko'})
+                });
+                const risikoData = await risikoResponse.json();
+                conversationState.questions.risiko = risikoData.questions;
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                addBotMessage('Maaf, terjadi kesalahan. Silakan refresh halaman.');
+            }
+        }
+
+        // Start conversation
+        function startConversation() {
+            addBotMessage('Halo! 👋 Saya adalah asisten virtual untuk membantu deteksi dini TBC.');
+            setTimeout(() => {
+                addBotMessage('Saya akan mengajukan beberapa pertanyaan untuk memahami kondisi Anda. Informasi Anda akan dijaga kerahasiaannya. 🔒');
+                setTimeout(() => {
+                    nextStep();
+                }, 1500);
+            }, 1000);
+        }
+
+        // Add bot message
+        function addBotMessage(text, isResult = false) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">${text}</div>
+            `;
+            
+            messagesDiv.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // Add user message
+        function addUserMessage(text) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">👤</div>
+                <div class="message-content">${text}</div>
+            `;
+            
+            messagesDiv.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // Show typing indicator
+        function showTyping() {
+            const messagesDiv = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'message bot';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="typing-indicator active">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            messagesDiv.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typing-indicator');
+            if (typing) typing.remove();
+        }
+
+        // Scroll to bottom
+        function scrollToBottom() {
+            const messagesDiv = document.getElementById('chat-messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Show quick replies
+        function showQuickReplies(options, isYesNo = false) {
+            const repliesDiv = document.getElementById('quick-replies');
+            repliesDiv.innerHTML = '';
+            
+            if (isYesNo) {
+                options = ['Ya', 'Tidak'];
+            }
+            
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.textContent = option;
+                btn.onclick = () => handleQuickReply(option);
+                repliesDiv.appendChild(btn);
+            });
+        }
+
+        function clearQuickReplies() {
+            document.getElementById('quick-replies').innerHTML = '';
+        }
+
+        // Handle quick reply
+        function handleQuickReply(value) {
+            addUserMessage(value);
+            clearQuickReplies();
+            processUserInput(value);
+        }
+
+        // Next step in conversation
+        function nextStep() {
+            if (conversationState.step >= conversationFlow.length) {
+                return;
+            }
+
+            const currentStep = conversationFlow[conversationState.step];
+            
+            switch (currentStep.type) {
+                case 'greeting':
+                    conversationState.step++;
+                    nextStep();
+                    break;
+                    
+                case 'input':
+                    showTyping();
+                    setTimeout(() => {
+                        hideTyping();
+                        addBotMessage(currentStep.question);
+                        conversationState.currentQuestion = currentStep;
+                    }, 800);
+                    break;
+                    
+                case 'choice':
+                    showTyping();
+                    setTimeout(() => {
+                        hideTyping();
+                        addBotMessage(currentStep.question);
+                        showQuickReplies(currentStep.options);
+                        conversationState.currentQuestion = currentStep;
+                    }, 800);
+                    break;
+                    
+                case 'gejala_intro':
+                    showTyping();
+                    setTimeout(() => {
+                        hideTyping();
+                        addBotMessage('Baik! Sekarang saya akan menanyakan beberapa gejala yang mungkin Anda alami. 🩺');
+                        setTimeout(() => {
+                            conversationState.step++;
+                            conversationState.gejalaIndex = 0;
+                            askGejala();
+                        }, 1500);
+                    }, 800);
+                    break;
+                    
+                case 'risiko_intro':
+                    showTyping();
+                    setTimeout(() => {
+                        hideTyping();
+                        addBotMessage('Terima kasih! Sekarang beberapa pertanyaan tentang faktor risiko. ⚠️');
+                        setTimeout(() => {
+                            conversationState.step++;
+                            conversationState.risikoIndex = 0;
+                            askRisiko();
+                        }, 1500);
+                    }, 800);
+                    break;
+                    
+                case 'cerita':
+                    showTyping();
+                    setTimeout(() => {
+                        hideTyping();
+                        addBotMessage(currentStep.question);
+                        conversationState.currentQuestion = currentStep;
+                    }, 800);
+                    break;
+                    
+                case 'analyze':
+                    analyzeResults();
+                    break;
+            }
+        }
+
+        // Ask gejala questions
+        function askGejala() {
+            if (conversationState.gejalaIndex < conversationState.questions.gejala.length) {
+                const question = conversationState.questions.gejala[conversationState.gejalaIndex];
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addBotMessage(question.text);
+                    showQuickReplies([], true);
+                    conversationState.currentQuestion = { type: 'gejala', data: question };
+                }, 800);
+            } else {
+                conversationState.step++;
+                nextStep();
+            }
+        }
+
+        // Ask risiko questions
+        function askRisiko() {
+            if (conversationState.risikoIndex < conversationState.questions.risiko.length) {
+                const question = conversationState.questions.risiko[conversationState.risikoIndex];
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addBotMessage(question.text);
+                    showQuickReplies([], true);
+                    conversationState.currentQuestion = { type: 'risiko', data: question };
+                }, 800);
+            } else {
+                conversationState.step++;
+                nextStep();
+            }
+        }
+
+        // Process user input
+        function processUserInput(input) {
+            const current = conversationState.currentQuestion;
+            
+            if (!current) return;
+            
+            if (current.type === 'gejala') {
+                const answer = input.toLowerCase() === 'ya';
+                conversationState.gejala[current.data.key] = answer;
+                conversationState.gejalaIndex++;
+                askGejala();
+            } else if (current.type === 'risiko') {
+                const answer = input.toLowerCase() === 'ya';
+                conversationState.faktorRisiko[current.data.key] = answer;
+                conversationState.risikoIndex++;
+                askRisiko();
+            } else if (current.key === 'nama') {
+                conversationState.userData.nama = input;
+                conversationState.step++;
+                nextStep();
+            } else if (current.key === 'usia') {
+                conversationState.userData.usia = parseInt(input) || 0;
+                conversationState.step++;
+                nextStep();
+            } else if (current.key === 'jenis_kelamin') {
+                conversationState.userData.jenis_kelamin = input;
+                conversationState.step++;
+                nextStep();
+            } else if (current.key === 'lokasi') {
+                conversationState.userData.lokasi = input;
+                conversationState.step++;
+                nextStep();
+            } else if (current.key === 'cerita') {
+                conversationState.userData.cerita = input;
+                conversationState.step++;
+                nextStep();
+            }
+        }
+
+        // Send message
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addUserMessage(message);
+            input.value = '';
+            
+            processUserInput(message);
+        }
+
+        // Enter key to send
+        document.getElementById('user-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Analyze results
+        async function analyzeResults() {
+            showTyping();
+            
+            const payload = {
+                nama: conversationState.userData.nama || 'Anonim',
+                usia: conversationState.userData.usia || 0,
+                jenis_kelamin: conversationState.userData.jenis_kelamin || 'Tidak disebutkan',
+                lokasi: conversationState.userData.lokasi || 'Tidak disebutkan',
+                gejala: conversationState.gejala,
+                faktor_risiko: conversationState.faktorRisiko,
+                cerita: conversationState.userData.cerita || ''
+            };
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                hideTyping();
+
+                if (data.success) {
+                    showResults(data.result);
+                } else {
+                    addBotMessage('Maaf, terjadi kesalahan dalam analisis. Silakan coba lagi.');
+                }
+            } catch (error) {
+                hideTyping();
+                console.error('Error:', error);
+                addBotMessage('Maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
+            }
+        }
+
+        // Show results
+        function showResults(result) {
+            setTimeout(() => {
+                addBotMessage(`Terima kasih ${conversationState.userData.nama}! Berikut hasil analisis saya:`);
+                
+                setTimeout(() => {
+                    const resultHtml = `
+                        <div class="result-card">
+                            <div class="result-status">${result.status}</div>
+                            <p><strong>Skor Total: ${result.skor}</strong></p>
+                            
+                            <h3>🏥 Jenis TBC Terdeteksi:</h3>
+                            <ul class="result-list">
+                                ${result.jenis_tbc.map(j => `<li>${j}</li>`).join('')}
+                            </ul>
+                            
+                            <h3>💡 Rekomendasi:</h3>
+                            <ul class="result-list">
+                                ${result.rekomendasi.slice(0, 5).map(r => `<li>${r}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    addBotMessage(resultHtml);
+                    
+                    setTimeout(() => {
+                        addBotMessage('Apakah Anda ingin melakukan deteksi ulang?');
+                        showQuickReplies(['Ya, deteksi ulang', 'Lihat statistik', 'Selesai']);
+                        conversationState.currentQuestion = { type: 'final' };
+                    }, 2000);
+                }, 1000);
+            }, 1000);
+        }
+
+        // Handle final choice
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quick-reply-btn')) {
+                const text = e.target.textContent;
+                if (text === 'Ya, deteksi ulang') {
+                    setTimeout(() => location.reload(), 500);
+                } else if (text === 'Lihat statistik') {
+                    setTimeout(() => location.href = '/statistik', 500);
+                } else if (text === 'Selesai') {
+                    setTimeout(() => location.href = '/', 500);
+                }
+            }
+        });
     </script>
 </body>
 </html>
